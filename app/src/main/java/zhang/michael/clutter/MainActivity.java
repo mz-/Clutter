@@ -68,7 +68,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
 
-        /*ImageView img = (ImageView)findViewById(R.id.ima);*/
+
 
         final SwipeFlingAdapterView cardsContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
         final PackageManager pManager = mContext.getPackageManager();
@@ -108,29 +108,15 @@ public class MainActivity extends ActionBarActivity {
 
                                             @Override
                                             public void onLeftCardExit(Object dataObject) {
-
                                                 Uri packageURI = Uri.parse("package:" + ((ApplicationInfo) dataObject).packageName);
                                                 Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
                                                 startActivity(uninstallIntent);
-                                                if (packages.size() == 0) {
-                                                    keepButton.setVisibility(View.GONE);
-                                                    deleteButton.setVisibility(View.GONE);
-                                                    restartButton.setVisibility(View.VISIBLE);
-                                                }
-
-                                                TextView progView = (TextView) findViewById(R.id.progress);
-                                                progView.setText(packages.size()+" left");
-
+                                                cardExitAction();
                                             }
 
                                             @Override
                                             public void onRightCardExit(Object dataObject) {
-                                                if (packages.size() == 0) {
-                                                    keepButton.setVisibility(View.GONE);
-                                                    deleteButton.setVisibility(View.GONE);
-                                                    restartButton.setVisibility(View.VISIBLE);
-                                                }
-
+                                                cardExitAction();
                                             }
 
                                             @Override
@@ -143,6 +129,25 @@ public class MainActivity extends ActionBarActivity {
                                                 View view = cardsContainer.getSelectedView();
                                                 view.findViewById(R.id.item_swipe_left_indicator).setAlpha(v < 0 ? (float) (-0.6*v) : 0);
                                                 view.findViewById(R.id.item_swipe_right_indicator).setAlpha(v > 0 ? (float) (0.6*v) : 0);
+                                            }
+
+                                            public void cardExitAction() {
+                                                if (packages.size() == 0) {
+                                                    keepButton.setVisibility(View.GONE);
+                                                    deleteButton.setVisibility(View.GONE);
+                                                    restartButton.setVisibility(View.VISIBLE);
+                                                }
+
+                                                TextView progView = (TextView) findViewById(R.id.progress);
+                                                int remainingApps = packages.size();
+                                                String updateProgress = remainingApps + " left";
+                                                if (remainingApps <= 5 && remainingApps > 0) {
+                                                    updateProgress += ", almost there!";
+                                                }
+                                                if (remainingApps == 0) {
+                                                    updateProgress = "You're done!";
+                                                }
+                                                progView.setText(updateProgress);
                                             }
                                         }
 

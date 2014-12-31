@@ -48,29 +48,18 @@
 
     </LinearLayout>
 
-    <FrameLayout
+
+
+    <TextView
         android:layout_width="200dp"
-        android:layout_height="225dp"
-        android:layout_gravity="center">
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="#90A4AE"
+        android:textSize="100sp"
+        android:text="@string/done"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="190dp"
-            android:layout_gravity="center|top"
-            android:gravity="center"
-            android:textColor="#90A4AE"
-            android:textSize="100dp"
-            android:text="@string/done"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_gravity="bottom|center"
-            android:gravity="center"
-            android:textColor="#90A4AE"
-            android:text="@string/refresh"/>
-
-    </FrameLayout>
 
     
     <com.lorentzos.flingswipe.SwipeFlingAdapterView
