@@ -22,6 +22,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.os.StatFs;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -44,6 +46,7 @@ import android.widget.Toast;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +59,8 @@ public class MainActivity extends ActionBarActivity {
     private ArrayList<ApplicationInfo> packages;
     private IconNameAdapter appsAdapter;
     private Context mContext = this;
-    private ApplicationInfo lastAccessed;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +96,9 @@ public class MainActivity extends ActionBarActivity {
 
 
 
+        TextView progView = (TextView) findViewById(R.id.progress);
+        progView.setText(packages.size()+" left");
+
         cardsContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
                                             @Override
                                             public void removeFirstObjectInAdapter() {
@@ -111,6 +118,9 @@ public class MainActivity extends ActionBarActivity {
                                                     restartButton.setVisibility(View.VISIBLE);
                                                 }
 
+                                                TextView progView = (TextView) findViewById(R.id.progress);
+                                                progView.setText(packages.size()+" left");
+
                                             }
 
                                             @Override
@@ -120,7 +130,7 @@ public class MainActivity extends ActionBarActivity {
                                                     deleteButton.setVisibility(View.GONE);
                                                     restartButton.setVisibility(View.VISIBLE);
                                                 }
-                                                lastAccessed = (ApplicationInfo) dataObject;
+
                                             }
 
                                             @Override
@@ -194,6 +204,7 @@ public class MainActivity extends ActionBarActivity {
 
 
 
+
     public class IconNameAdapter extends BaseAdapter {
 
         private ArrayList<ApplicationInfo> installedApps = new ArrayList();
@@ -201,7 +212,6 @@ public class MainActivity extends ActionBarActivity {
 
         private final Context context;
 
-        // the context is needed to inflate views in getView()
         public IconNameAdapter(Context context) {
             this.context = context;
         }
@@ -217,15 +227,11 @@ public class MainActivity extends ActionBarActivity {
             return installedApps.size();
         }
 
-        // getItem(int) in Adapter returns Object but we can override
-        // it to BananaPhone thanks to Java return type covariance
         @Override
         public ApplicationInfo getItem(int position) {
             return installedApps.get(position);
         }
 
-        // getItemId() is often useless, I think this should be the default
-        // implementation in BaseAdapter
         @Override
         public long getItemId(int position) {
             return position;
@@ -267,36 +273,12 @@ public class MainActivity extends ActionBarActivity {
                 appIcon = currApp.loadIcon(pm);
             }
 
-
-            int color = getDominantColor(drawableToBitmap(appIcon));
-            /*appNameView.setBackgroundColor(color);*/
-
-            /*LayerDrawable bgDrawable = (LayerDrawable)appNameView.getBackground();
-            final GradientDrawable shape = (GradientDrawable) (bgDrawable.findDrawableByLayerId(R.id.nametag));
-            shape.setColor(color);*/
             iconView.setImageDrawable(appIcon);
             return convertView;
         }
 
     }
 
-    public static Bitmap drawableToBitmap (Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable)drawable).getBitmap();
-        }
 
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-
-        return bitmap;
-    }
-
-    public static int getDominantColor (Bitmap bitmap) {
-        Bitmap onePixel = Bitmap.createScaledBitmap(bitmap, 1, 1, true);
-        int pixel = onePixel.getPixel(0,0);
-        return pixel;
-    }
 
 }
