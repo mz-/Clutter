@@ -1,0 +1,79 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context=".MainActivity" android:layout_gravity="center">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom|center">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/restart"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_design_restart"
+            android:id="@+id/restart"
+            android:onClick="restartActivity"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:gravity="center"
+            android:text="@string/delete"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_design"
+            android:layout_height="wrap_content"
+            android:id="@+id/delete"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:text="@string/keep"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_design_keep"
+            android:layout_height="wrap_content"
+            android:id="@+id/keep"/>
+
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="200dp"
+        android:layout_height="225dp"
+        android:layout_gravity="center">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="190dp"
+            android:layout_gravity="center|top"
+            android:gravity="center"
+            android:textColor="#90A4AE"
+            android:textSize="100dp"
+            android:text="@string/done"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_gravity="bottom|center"
+            android:gravity="center"
+            android:textColor="#90A4AE"
+            android:text="@string/refresh"/>
+
+    </FrameLayout>
+
+    
+    <com.lorentzos.flingswipe.SwipeFlingAdapterView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:rotation_degrees="0"
+        app:max_visible="10"
+        app:min_adapter_stack="0"
+        />
+
+
+</FrameLayout>
