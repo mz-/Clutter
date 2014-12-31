@@ -3,11 +3,9 @@
     android:layout_height="match_parent"
     tools:context=".About"
     android:orientation="vertical"
-    android:paddingRight="10dp"
-    android:paddingLeft="10dp"
     android:paddingBottom="16dp"
     android:paddingTop="16dp">
-    <FrameLayout
+    <!--<FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_corners">
@@ -72,7 +70,7 @@
                 android:onClick="goToLink"/>
 
         </LinearLayout>
-    </FrameLayout>
+    </FrameLayout>-->
 
 
 

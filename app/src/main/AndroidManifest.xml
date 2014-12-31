@@ -21,9 +21,9 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" >
             <intent-filter>
@@ -34,10 +34,10 @@
         </activity>
         <activity
             android:name=".About"
-            android:label="@string/title_activity_about"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:parentActivityName="zhang.michael.clutter.MainActivity">
+            android:label="@string/action_settings"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" >
         </activity>
     </application>
 

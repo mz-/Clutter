@@ -1,58 +1,46 @@
 package zhang.michael.clutter;
 
-import android.app.ActivityManager;
-import android.app.Application;
+
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
+
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
+
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
+
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
+
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
-import android.os.StatFs;
+
+
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
+
 import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.SimpleAdapter;
+
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-/*
-&& ((ApplicationInfo.FLAG_UPDATED_SYSTEM_APP & pInfo.flags) != 0)
-*/
 
 public class MainActivity extends ActionBarActivity {
     private List<ApplicationInfo> allPackages;
@@ -66,9 +54,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
 
         final SwipeFlingAdapterView cardsContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
         final PackageManager pManager = mContext.getPackageManager();
@@ -92,12 +77,29 @@ public class MainActivity extends ActionBarActivity {
         final Button keepButton = (Button) findViewById(R.id.keep);
         final Button deleteButton = (Button) findViewById(R.id.delete);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-
+        boolean showButtons = preferences.getBoolean("pref_buttons", true);
+        boolean showProgress = preferences.getBoolean("pref_progress", true);
 
 
         TextView progView = (TextView) findViewById(R.id.progress);
         progView.setText(packages.size()+" left");
+
+        if (!showButtons) {
+            keepButton.setVisibility(View.GONE);
+            deleteButton.setVisibility(View.GONE);
+        } else {
+            keepButton.setVisibility(View.VISIBLE);
+            deleteButton.setVisibility(View.VISIBLE);
+        }
+        if (!showProgress) {
+            progView.setVisibility(View.GONE);
+        } else {
+            progView.setVisibility(View.VISIBLE);
+        }
+
+
 
         cardsContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
                                             @Override
@@ -170,6 +172,29 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean showButtons = preferences.getBoolean("pref_buttons", true);
+        boolean showProgress = preferences.getBoolean("pref_progress", true);
+        Button keepButton = (Button) findViewById(R.id.keep);
+        Button deleteButton = (Button) findViewById(R.id.delete);
+        TextView progressView = (TextView) findViewById(R.id.progress);
+        if (!showButtons) {
+            keepButton.setVisibility(View.GONE);
+            deleteButton.setVisibility(View.GONE);
+        } else {
+            keepButton.setVisibility(View.VISIBLE);
+            deleteButton.setVisibility(View.VISIBLE);
+        }
+        if (!showProgress) {
+            progressView.setVisibility(View.GONE);
+        } else {
+            progressView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -206,9 +231,6 @@ public class MainActivity extends ActionBarActivity {
         finish();
         startActivity(intent);
     }
-
-
-
 
     public class IconNameAdapter extends BaseAdapter {
 

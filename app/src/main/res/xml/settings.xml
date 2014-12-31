@@ -1,4 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="General">
+        <CheckBoxPreference android:key="pref_buttons"
+            android:title="@string/pref_buttons"
+            android:defaultValue="true" />
+        <CheckBoxPreference android:key="pref_progress"
+            android:title="@string/pref_progress"
+            android:defaultValue="true"/>
+        <Preference android:title="@string/restart_activity"
+            android:summary="@string/restart_summary">
+            <intent
+                android:action="android.intent.action.MAIN"
+                android:targetPackage="zhang.michael.clutter"
+                android:targetClass="zhang.michael.clutter.MainActivity"
+                />
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="About">
+        <Preference android:title="@string/the_app" android:summary="@string/credits"/>
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/Diolor/Swipecards"/>
+        <Preference android:title="@string/me" android:summary="@string/me_summary">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://michaelzhang.io"
+                />
+        </Preference>
+    </PreferenceCategory>
 
 </PreferenceScreen>
