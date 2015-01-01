@@ -1,6 +1,7 @@
 package zhang.michael.clutter;
 
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
@@ -11,6 +12,9 @@ import android.content.pm.PackageManager;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 import android.net.Uri;
@@ -34,6 +38,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
@@ -47,6 +52,9 @@ public class MainActivity extends ActionBarActivity {
     private ArrayList<ApplicationInfo> packages;
     private IconNameAdapter appsAdapter;
     private Context mContext = this;
+    private ApplicationInfo lastSeen;
+    private SwipeFlingAdapterView cardsContainer;
+
 
 
 
@@ -55,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final SwipeFlingAdapterView cardsContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
+        cardsContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
         final PackageManager pManager = mContext.getPackageManager();
         allPackages = pManager.getInstalledApplications(PackageManager.GET_META_DATA |
                 PackageManager.GET_SHARED_LIBRARY_FILES |
@@ -69,30 +77,22 @@ public class MainActivity extends ActionBarActivity {
         }
 
         appsAdapter = new IconNameAdapter(mContext);
-        appsAdapter.updateAppsList(packages, pManager);
+        appsAdapter.updateAppsList(packages);
         cardsContainer.setAdapter(appsAdapter);
 
-        final Button restartButton = (Button) findViewById(R.id.restart);
-        restartButton.setVisibility(View.GONE);
-        final Button keepButton = (Button) findViewById(R.id.keep);
-        final Button deleteButton = (Button) findViewById(R.id.delete);
+        /*final Button keepButton = (Button) findViewById(R.id.keep);
+        final Button deleteButton = (Button) findViewById(R.id.delete);*/
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        boolean showButtons = preferences.getBoolean("pref_buttons", true);
+
         boolean showProgress = preferences.getBoolean("pref_progress", true);
 
 
         TextView progView = (TextView) findViewById(R.id.progress);
-        progView.setText(packages.size()+" left");
 
-        if (!showButtons) {
-            keepButton.setVisibility(View.GONE);
-            deleteButton.setVisibility(View.GONE);
-        } else {
-            keepButton.setVisibility(View.VISIBLE);
-            deleteButton.setVisibility(View.VISIBLE);
-        }
+
+
         if (!showProgress) {
             progView.setVisibility(View.GONE);
         } else {
@@ -113,12 +113,15 @@ public class MainActivity extends ActionBarActivity {
                                                 Uri packageURI = Uri.parse("package:" + ((ApplicationInfo) dataObject).packageName);
                                                 Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
                                                 startActivity(uninstallIntent);
+
                                                 cardExitAction();
                                             }
 
                                             @Override
                                             public void onRightCardExit(Object dataObject) {
                                                 cardExitAction();
+                                                lastSeen = ((ApplicationInfo) dataObject);
+
                                             }
 
                                             @Override
@@ -134,11 +137,10 @@ public class MainActivity extends ActionBarActivity {
                                             }
 
                                             public void cardExitAction() {
-                                                if (packages.size() == 0) {
+                                                /*if (packages.size() == 0) {
                                                     keepButton.setVisibility(View.GONE);
                                                     deleteButton.setVisibility(View.GONE);
-                                                    restartButton.setVisibility(View.VISIBLE);
-                                                }
+                                                }*/
 
                                                 TextView progView = (TextView) findViewById(R.id.progress);
                                                 int remainingApps = packages.size();
@@ -156,37 +158,32 @@ public class MainActivity extends ActionBarActivity {
 
         );
 
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                cardsContainer.getTopCardListener().selectLeft();
-            }
-        });
-
-        keepButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                cardsContainer.getTopCardListener().selectRight();
-            }
-        });
 
 
+
+
+
+    }
+
+    public void swipeRight(View view) {
+        cardsContainer.getSelectedView().findViewById(R.id.item_swipe_right_indicator).setAlpha((float) 0.6);
+        cardsContainer.getTopCardListener().selectRight();
+    }
+
+    public void swipeLeft(View view) {
+        cardsContainer.getSelectedView().findViewById(R.id.item_swipe_left_indicator).setAlpha((float) 0.6);
+        cardsContainer.getTopCardListener().selectLeft();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean showButtons = preferences.getBoolean("pref_buttons", true);
+
         boolean showProgress = preferences.getBoolean("pref_progress", true);
-        Button keepButton = (Button) findViewById(R.id.keep);
-        Button deleteButton = (Button) findViewById(R.id.delete);
+
         TextView progressView = (TextView) findViewById(R.id.progress);
-        if (!showButtons) {
-            keepButton.setVisibility(View.GONE);
-            deleteButton.setVisibility(View.GONE);
-        } else {
-            keepButton.setVisibility(View.VISIBLE);
-            deleteButton.setVisibility(View.VISIBLE);
-        }
+
         if (!showProgress) {
             progressView.setVisibility(View.GONE);
         } else {
@@ -211,10 +208,15 @@ public class MainActivity extends ActionBarActivity {
             case R.id.action_about:
                 showAbout();
                 return true;
+            case R.id.action_restart:
+                restartActivity();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
 
     private boolean isUserPackage(ApplicationInfo pInfo) {
@@ -226,11 +228,39 @@ public class MainActivity extends ActionBarActivity {
         startActivity(aboutIntent);
     }
 
-    public void restartActivity(View v) {
+    public void launchCurrentApp(View view) {
+        Intent appIntent = getPackageManager().getLaunchIntentForPackage(packages.get(0).packageName);
+        appIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        startActivityForResult(appIntent,0);
+    }
+
+    public void restartActivity() {
         Intent intent = getIntent();
         finish();
         startActivity(intent);
     }
+
+    public Drawable getAppIcon(ApplicationInfo app) {
+        Drawable appIcon;
+        PackageManager pm = mContext.getPackageManager();
+        try {
+            Resources resourcesForApplication = pm.getResourcesForApplication(app);
+            Configuration config = resourcesForApplication.getConfiguration();
+            Configuration originalConfig = new Configuration(config);
+
+            DisplayMetrics displayMetrics = resourcesForApplication.getDisplayMetrics();
+            DisplayMetrics originalDisplayMetrics =  resourcesForApplication.getDisplayMetrics();
+            displayMetrics.densityDpi =  DisplayMetrics.DENSITY_XXHIGH;
+            resourcesForApplication.updateConfiguration(config, displayMetrics);
+
+            appIcon = resourcesForApplication.getDrawable(app.icon);
+        } catch (PackageManager.NameNotFoundException e) {
+            appIcon = app.loadIcon(pm);
+        }
+        return appIcon;
+    }
+
 
     public class IconNameAdapter extends BaseAdapter {
 
@@ -241,11 +271,11 @@ public class MainActivity extends ActionBarActivity {
 
         public IconNameAdapter(Context context) {
             this.context = context;
+            this.pm = context.getPackageManager();
         }
 
-        public void updateAppsList(ArrayList<ApplicationInfo> updatedApps, PackageManager pman) {
+        public void updateAppsList(ArrayList<ApplicationInfo> updatedApps) {
             this.installedApps = updatedApps;
-            this.pm = pman;
             notifyDataSetChanged();
         }
 
@@ -281,26 +311,9 @@ public class MainActivity extends ActionBarActivity {
             }
 
             ApplicationInfo currApp = getItem(position);
-            /*Drawable icon = getIconFromPackageName(currApp.packageName, mContext);*/
             appNameView.setText(pm.getApplicationLabel(currApp)+"?");
 
-            Drawable appIcon;
-            try {
-                Resources resourcesForApplication = pm.getResourcesForApplication(currApp);
-                Configuration config = resourcesForApplication.getConfiguration();
-                Configuration originalConfig = new Configuration(config);
-
-                DisplayMetrics displayMetrics = resourcesForApplication.getDisplayMetrics();
-                DisplayMetrics originalDisplayMetrics =  resourcesForApplication.getDisplayMetrics();
-                displayMetrics.densityDpi =  DisplayMetrics.DENSITY_XXHIGH;
-                resourcesForApplication.updateConfiguration(config, displayMetrics);
-
-                appIcon = resourcesForApplication.getDrawable(currApp.icon);
-            } catch (PackageManager.NameNotFoundException e) {
-                appIcon = currApp.loadIcon(pm);
-            }
-
-            iconView.setImageDrawable(appIcon);
+            iconView.setImageDrawable(getAppIcon(currApp));
             return convertView;
         }
 
