@@ -134,10 +134,6 @@ public class MainActivity extends ActionBarActivity {
                                             }
 
                                             public void cardExitAction() {
-                                                /*if (packages.size() == 0) {
-                                                    keepButton.setVisibility(View.GONE);
-                                                    deleteButton.setVisibility(View.GONE);
-                                                }*/
 
                                                 TextView progView = (TextView) findViewById(R.id.progress);
                                                 int remainingApps = packages.size();

@@ -8,10 +8,6 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="About">
         <Preference android:title="@string/the_app" android:summary="@string/credits"/>
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="http://github.com/Diolor/Swipecards"
-                />
         <Preference android:title="@string/me" android:summary="@string/me_summary">
             <intent
                 android:action="android.intent.action.VIEW"
