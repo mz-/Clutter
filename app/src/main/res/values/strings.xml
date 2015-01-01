@@ -17,7 +17,7 @@
     <string name="the_app">The app</string>
     <string name="me_summary">I\'m a second year computer science student at the University of California, Berkeley. Tap here to go to my site.</string>
     <string name="default_app_title">this app?</string>
-    <string name="default_activity_title">Time for a little spring cleaning. Swipe right to keep, left to uninstall</string>
+    <string name="default_activity_title">Time for a little spring cleaning</string>
 
 
 </resources>

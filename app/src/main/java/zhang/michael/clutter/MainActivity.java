@@ -1,7 +1,7 @@
 package zhang.michael.clutter;
 
 
-import android.app.Application;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -12,15 +12,13 @@ import android.content.pm.PackageManager;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
+
 import android.graphics.drawable.Drawable;
 
 import android.net.Uri;
 
 
-import android.preference.Preference;
+
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -33,12 +31,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.BaseAdapter;
-import android.widget.Button;
+
 
 import android.widget.ImageView;
 
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
@@ -80,8 +78,7 @@ public class MainActivity extends ActionBarActivity {
         appsAdapter.updateAppsList(packages);
         cardsContainer.setAdapter(appsAdapter);
 
-        /*final Button keepButton = (Button) findViewById(R.id.keep);
-        final Button deleteButton = (Button) findViewById(R.id.delete);*/
+
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -256,6 +253,8 @@ public class MainActivity extends ActionBarActivity {
 
             appIcon = resourcesForApplication.getDrawable(app.icon);
         } catch (PackageManager.NameNotFoundException e) {
+            appIcon = app.loadIcon(pm);
+        } catch (Resources.NotFoundException e) {
             appIcon = app.loadIcon(pm);
         }
         return appIcon;
